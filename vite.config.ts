@@ -1,6 +1,7 @@
 import {
   autogenerateEntrypoint,
   createMwGadgetImplementation,
+  fandoomUtilsI18nInjector,
 } from './plugins';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
@@ -26,14 +27,15 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
   const { 
     GADGET_NAMESPACE: gadgetNamespace = 'ext.gadget.store',
     SERVER_DEV_ORIGIN: serverDevOrigin = 'http://localhost:5173',
-    SERVER_PREVIEW_ORIGIN: serverPreviewOrigin = 'http://localhost:4173',
+    CDN_ENTRYPOINT: cdnEntrypoint = 'http://localhost:4173',
+    SERVER_PREVIEW_ORIGIN: serverPreviewOrigin,
   } = env;
   
   const isDev = mode === 'development';
   if (isDev) { 
     setViteServerOrigin(serverDevOrigin); 
   } else {
-    setViteServerOrigin(serverPreviewOrigin);
+    setViteServerOrigin(serverPreviewOrigin || cdnEntrypoint);
   }
   setGadgetNamespace(gadgetNamespace);
     
@@ -58,6 +60,9 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
       // In Vite Build, create the mw.loader.impl wrapped JS+CSS file
       rollup &&
         createMwGadgetImplementation(gadgetsToBuild, minify),
+      
+      // In Vite Build, help create boilerplate logic to load i18n
+      fandoomUtilsI18nInjector(gadgetsToBuild),
     ],
     build: {
       minify: minify,
@@ -122,6 +127,17 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
       // minifyWhitespace: minify && true,
       // minifyIdentifiers: minify && false,
       // minifySyntax: minify && true,
+
+      define: {
+        /**
+         * This is passed so we can replace the variable MH_DEVSCRIPTS_CDN_ENTRYPOINT 
+         * used in FandoomUtilsI18nLoader with the actual CDN URL during
+         * compilation
+         */
+        'MH_DEVSCRIPTS_CDN_ENTRYPOINT': `"${cdnEntrypoint}"`,
+
+        'MH_DEVSCRIPTS_GADGET_NAMESPACE': `"${gadgetNamespace}"`,
+      },
 
     },
     optimizeDeps: {
