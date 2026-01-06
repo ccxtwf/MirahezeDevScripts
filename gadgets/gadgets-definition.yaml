@@ -1,6 +1,6 @@
 workspace:
   enable_all: true
-  disable: []
+  disable: ["AudioPlayer", "BackgroundImage", "ImportButton", "Tab", "MassCopyUpload"]
 
 gadgets:
   AudioPlayer:
