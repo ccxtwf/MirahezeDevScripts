@@ -1,6 +1,6 @@
 workspace:
   enable_all: true
-  disable: ["AudioPlayer", "BackgroundImage", "ImportButton", "Tab", "MassCopyUpload"]
+  disable: ["AudioPlayer", "BackgroundImage", "CollapseJump", "ImportButton", "Tab", "MassCopyUpload"]
 
 gadgets:
   AudioPlayer:
@@ -45,6 +45,8 @@ gadgets:
       - style.css
     i18n:
       - i18n.json
+    resourceLoader:
+      rights: "sysop, bureaucrat, global-admin"
 
   AjaxBatchUndelete:
     description: "Allows batch undeletion of pages."
@@ -64,6 +66,8 @@ gadgets:
       - style.css
     i18n:
       - i18n.json
+    resourceLoader:
+      rights: "sysop, bureaucrat, global-admin"
 
   AjaxBatchRedirect:
     description: "Allows redirecting a list of pages in a form."
@@ -117,6 +121,7 @@ gadgets:
       - Doru
     links:
       - https://dev.fandom.com/wiki/Dorui
+      - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUiUtilsDorui
     scripts:
       - code.js
 
@@ -127,6 +132,7 @@ gadgets:
       - KockaAdmiralac
     links:
       - https://dev.fandom.com/wiki/Modal
+      - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUiUtilsModal
     scripts:
       - code.js
     styles:
@@ -138,6 +144,7 @@ gadgets:
       - OneTwoThreeFall
     links:
       - https://dev.fandom.com/wiki/QDmodal
+      - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUiUtilsQDmodal
     scripts:
       - code.js
     styles:
@@ -149,6 +156,7 @@ gadgets:
       - KockaAdmiralac
     links:
       - https://dev.fandom.com/wiki/UI-js
+      - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUiUtilsUijs
     scripts:
       - code.js
 
@@ -157,8 +165,9 @@ gadgets:
     authors:
       - Cqm
       - OneTwoThreeFall
-      - CoolMikeHatsune22 (port)
+      - CoolMikeHatsune22
     links:
+      - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUtilsI18nLoader
       - https://dev.fandom.com/wiki/I18n-js
     scripts:
       - gadget-impl.js
@@ -199,6 +208,8 @@ gadgets:
       - style.css
     i18n:
       - i18n.json
+    resourceLoader:
+      rights: "autoconfirmed, bot, sysop, bureaucrat"
 
   MassCopyUpload:
     description: "Adds a special page to copy upload many files/images to a wiki at once."
@@ -245,6 +256,8 @@ gadgets:
       - style.css
     i18n:
       - i18n.json
+    resourceLoader:
+      rights: "sysop, bureaucrat, global-admin"
 
   MassRename:
     description: "Rename multiple pages in a list fashion, similar to AjaxBatchDelete"
@@ -263,6 +276,8 @@ gadgets:
       - style.css
     i18n:
       - i18n.json
+    resourceLoader:
+      rights: "sysop, bureaucrat, global-admin"
 
   PageRenameAuto-update:
     description: "Automatically updates page links, transclusions and category members throughout the wiki upon renaming a page."
@@ -282,6 +297,8 @@ gadgets:
       - style.css
     i18n:
       - i18n.json
+    resourceLoader:
+      rights: "sysop, bureaucrat, global-admin"
 
   PowertoolsPlacement:
     description: "Convenience script for placing links to loaded userscripts in a shared portlet. Works across skins."

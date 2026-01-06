@@ -200,7 +200,7 @@ export function getGadgetsToBuild(gadgetsDefinition: GadgetsDefinition): GadgetD
  * @param gadget 
  * @returns 
  */
-function createScriptLoadingStatement(gadgetName: string) {
+export function createScriptLoadingStatement(gadgetName: string) {
   return `mw.loader.load("${getStaticUrlToFile(gadgetName, 'gadget-impl.js')}");`;
 }
 
@@ -271,7 +271,7 @@ function generateGadgetImplementationLoadConditionsWrapperCode(
   const conditions: string[] = [];
   const normalizeVariable = (variable: string | string[]) => {
     if (typeof variable === 'string') {
-      return variable.split(/\s*,\s*/);
+      return variable.trim().split(/\s*,\s*/).filter((val) => val !== '');
     }
     return variable;
   }
