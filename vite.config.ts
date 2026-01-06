@@ -2,6 +2,7 @@ import {
   autogenerateEntrypoint,
   createMwGadgetImplementation,
   fandoomUtilsI18nInjector,
+  buildOverviewPage,
 } from './plugins';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
@@ -63,6 +64,9 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
       
       // In Vite Build, help create boilerplate logic to load i18n
       fandoomUtilsI18nInjector(gadgetsToBuild),
+
+      // Build dist/index.html
+      buildOverviewPage(gadgetsToBuild),
     ],
     build: {
       minify: minify,
@@ -149,7 +153,7 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
       }
     },
     preview: {
-      open: '/load.js'
+      open: '/index.html'
     }
   }
 });
