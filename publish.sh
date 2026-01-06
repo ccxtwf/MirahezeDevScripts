@@ -7,6 +7,7 @@ cp -r "$DIST_DIR" "$TEMP_DIR/dist"
 git switch "$TARGET_BRANCH"
 rm -r "$DIST_DIR"
 cp -r "$TEMP_DIR/dist" "$DIST_DIR"
+mv "$DIST_DIR/index.html" "doc/index.html" 
 git add .
 git commit -m "Recompile gadget"
 git push
