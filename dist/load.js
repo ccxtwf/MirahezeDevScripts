@@ -1,4 +1,3 @@
-mw.loader.load("https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@dist/dist/CollapseJump/gadget-impl.js");
 mw.loader.load("https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@dist/dist/AjaxUndo/gadget-impl.js");
 mw.loader.load("https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@dist/dist/Countdown/gadget-impl.js");
 mw.loader.load("https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@dist/dist/FandoomUiUtilsDorui/gadget-impl.js");
