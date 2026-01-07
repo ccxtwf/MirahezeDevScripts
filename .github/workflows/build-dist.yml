@@ -7,12 +7,8 @@ on:
   push:
     branches: [ master ]
     paths: 
-      - gadgets/*.js
-      - gadgets/*.ts
-      - gadgets/*.less
-      - gadgets/*.css
-      - gadgets/*.json
-      - gadgets/*.yaml
+      - 'gadgets/**'
+      - '!gadgets/**.md'
   # Allow manual triggering from the Actions tab
   workflow_dispatch:
 
