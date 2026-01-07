@@ -48,7 +48,7 @@ jobs:
     
     - name: Set environment variables
       run: |
-        echo "CDN_ENTRYPOINT=https://cdn.jsdelivr.net/gh/${{ github.repository }}@dist/dist" >> $GITHUB_ENV
+        echo "CDN_ENTRYPOINT=https://cdn.jsdelivr.net/gh/${{ github.repository }}@${{ github.sha }}/dist" >> $GITHUB_ENV
 
     - name: Publish build result to dist branch
       run: |
