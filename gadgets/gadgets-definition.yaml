@@ -109,6 +109,7 @@ gadgets:
       - Asaba
       - ccxtwf / CoolMikeHatsune22 (port)
     links:
+      - https://dev.miraheze.org/wiki/Countdown
       - https://dev.fandom.com/wiki/Countdown
     scripts:
       - code.js
@@ -120,8 +121,8 @@ gadgets:
     authors:
       - Doru
     links:
-      - https://dev.fandom.com/wiki/Dorui
       - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUiUtilsDorui
+      - https://dev.fandom.com/wiki/Dorui
     scripts:
       - code.js
 
@@ -131,8 +132,8 @@ gadgets:
       - Noreplyz
       - KockaAdmiralac
     links:
-      - https://dev.fandom.com/wiki/Modal
       - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUiUtilsModal
+      - https://dev.fandom.com/wiki/Modal
     scripts:
       - code.js
     styles:
@@ -143,8 +144,8 @@ gadgets:
     authors:
       - OneTwoThreeFall
     links:
-      - https://dev.fandom.com/wiki/QDmodal
       - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUiUtilsQDmodal
+      - https://dev.fandom.com/wiki/QDmodal
     scripts:
       - code.js
     styles:
@@ -155,13 +156,13 @@ gadgets:
     authors:
       - KockaAdmiralac
     links:
-      - https://dev.fandom.com/wiki/UI-js
       - https://github.com/ccxtwf/MirahezeDevScripts/tree/master/gadgets/FandoomUiUtilsUijs
+      - https://dev.fandom.com/wiki/UI-js
     scripts:
       - code.js
 
   FandoomUtilsI18nLoader:
-    description: "Library for loading i18n messages."
+    description: "Library for loading i18n messages. Fork of i18n-js."
     authors:
       - Cqm
       - OneTwoThreeFall
@@ -317,6 +318,7 @@ gadgets:
       - KockaAdmiralac
       - ccxtwf / CoolMikeHatsune22 (port)
     links:
+      - https://dev.miraheze.org/wiki/PreloadTemplates
       - https://dev.fandom.com/wiki/PreloadTemplates
     scripts:
       - code.js
@@ -333,6 +335,7 @@ gadgets:
       - Pecoes
       - ccxtwf / CoolMikeHatsune22 (port)
     links:
+      - https://dev.miraheze.org/wiki/View_Source
       - https://dev.fandom.com/wiki/View_Source
     scripts:
       - code.js
