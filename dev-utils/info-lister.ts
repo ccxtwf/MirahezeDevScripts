@@ -99,7 +99,7 @@ function appendStyles(doc: HTMLDocument): void {
         border-top: solid 1px;
       }
       td:last-child {
-        border-top: solid 1px;
+        border-bottom: solid 1px;
       }
       td a {
         word-break: break-all;
