@@ -175,7 +175,8 @@ mw.loader.using([
         addCategoryContents: addCategoryContents,
         pause: pause,
         start: start
-      }
+      },
+      closeOnClickingBackdrop: false,
     });
     protectModal.create();
     $form = $('#form-mass-protect');

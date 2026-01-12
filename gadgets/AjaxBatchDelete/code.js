@@ -61,7 +61,7 @@ mw.loader.using('mediawiki.api', function() {
           text: i18n.msg('pause').escape(),
           primary: true,
           event: 'pause',
-            disabled: true
+          disabled: true
         },
         {
           id: 'abd-add-pages-in-category',
@@ -74,7 +74,8 @@ mw.loader.using('mediawiki.api', function() {
         addCategoryContents: addCategoryContents,
         pause: pause,
         start: start
-      }
+      },
+      closeOnClickingBackdrop: false,
     });
     deleteModal.create();
     $form = $('#form-batch-delete');
