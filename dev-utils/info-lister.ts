@@ -3,15 +3,19 @@ import { createScriptLoadingStatement } from "./build-orchestration";
 import { GadgetDefinition } from "./types";
 import { resolveDistPath } from "./utils";
 import { writeFileSync } from "node:fs";
+import type { PluginContext } from "rolldown";
 
 /**
  * Build a simple HTML overview page containing the script info
  * 
+ * @param pluginContext 
  * @param gadgets 
  * @returns 
  */
-export function buildOverviewPageHtml(gadgets: GadgetDefinition[]): void {
+export function buildOverviewPageHtml(pluginContext: PluginContext, gadgets: GadgetDefinition[]): void {
   try {
+    pluginContext.info('Generating dist/index.html...');
+
     const dom = new JSDOM(`<!DOCTYPE html><html lang="en-US"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body></body></html>`);
     const doc = dom.window.document;
     const title = doc.createElement('title');
@@ -31,7 +35,7 @@ export function buildOverviewPageHtml(gadgets: GadgetDefinition[]): void {
       { flag: 'w+', encoding: 'utf-8' }
     );
   } catch (err) {
-    console.error(err);
+    pluginContext.error(err);
   }
 }
 

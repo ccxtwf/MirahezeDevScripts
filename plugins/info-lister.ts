@@ -16,12 +16,7 @@ export default function buildOverviewPage(gadgetsToBuildAtIntialState: GadgetDef
     enforce: 'post', // Enforce after Vite build plugins
 
     writeBundle() {
-      this.info('Generating dist/index.html...');
-      try {
-        buildOverviewPageHtml(gadgetsToBuildAtIntialState);
-      } catch (err) {
-        console.error(err);
-      }
-    },
+      buildOverviewPageHtml(this, gadgetsToBuildAtIntialState);
+    }
   }
 }

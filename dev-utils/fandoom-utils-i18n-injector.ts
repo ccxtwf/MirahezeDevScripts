@@ -210,12 +210,13 @@ export async function createI18nLoadingLogic(gadget: GadgetDefinition, loadOptio
 /**
  * Transformer logic
  * 
+ * @param pluginContext
  * @param moduleIdsToWatch Only transform files that are listed in this bundle
  * @param code 
  * @param id 
  * @returns 
  */
-export async function fandoomUtilsI18nTransformer(this: PluginContext, moduleIdsToWatch: { [gadgetId: string]: GadgetDefinition }, code: string, id: string): Promise<TransformResult> {
+export async function fandoomUtilsI18nTransformer(pluginContext: PluginContext, moduleIdsToWatch: { [gadgetId: string]: GadgetDefinition }, code: string, id: string): Promise<TransformResult> {
   const gadget: GadgetDefinition = moduleIdsToWatch[id];
   // Skip stylesheets, any gadgets that don't have i18n
   if (gadget === undefined) return;
@@ -234,11 +235,11 @@ export async function fandoomUtilsI18nTransformer(this: PluginContext, moduleIds
   
   const boilerplate = await createI18nLoadingLogic(gadget!, loadOptions, i18nOptions);
   if (boilerplate === null) {
-    this.error(`Failed to inject i18n loading logic into gadget ${gadget.name}: 'en' not found`);
+    pluginContext.error(`Failed to inject i18n loading logic into gadget ${gadget.name}: 'en' not found`);
     return;
   }
 
-  this.info(`Injected i18n loading logic into gadget ${gadget.name}`);
+  pluginContext.info(`Injected i18n loading logic into gadget ${gadget.name}`);
 
   return {
     code: code.replace(
