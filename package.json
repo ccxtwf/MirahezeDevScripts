@@ -27,6 +27,7 @@
     "mwn": "^3.0.1",
     "selenium-webdriver": "^4.39.0",
     "stylelint-config-wikimedia": "^0.18.0",
+    "terser": "^5.46.1",
     "ts-jest": "^29.4.6",
     "types-mediawiki": "^2.0.0",
     "typescript": "^5.9.2",
