@@ -30,6 +30,7 @@
         const panels = allPanels[ group ] || [];
         for ( const { el, option: panelOption } of panels ) {
             el.classList.toggle( 'tab-panel-hidden', panelOption !== option );
+            el.hidden = panelOption !== option;
         }
     }
 
@@ -107,7 +108,8 @@
         } );
 
         document.querySelectorAll( '.tab-button-container, .tab-panel-container' ).forEach( ( container ) => {
-            container.querySelectorAll( '.tab-button, .tab-panel' ).forEach( ( elem, index ) => {
+            // Scope this so that nested tab buttons don't get touched
+            container.querySelectorAll( ':scope > .tab-button, :scope > .tab-panel' ).forEach( ( elem, index ) => {
                 if ( !elem.dataset.option ) {
                     elem.dataset.option = index;
                 }

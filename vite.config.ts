@@ -69,7 +69,12 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
       buildOverviewPage(gadgetsToBuild),
     ],
     build: {
-      minify: minify,
+      minify: minify ? 'terser' : false,
+      terserOptions: {
+        mangle: {
+          reserved: ['$', 'mw']
+        }
+      },
       cssMinify: minify,
       rollupOptions: {
         input: bundleInputs,
