@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import type { PluginContext, TransformResult } from "rollup";
+import type { PluginContext, TransformResult } from "rolldown";
 import type { GadgetDefinition } from "./types.ts";
 //@ts-ignore
 import { resolveSrcGadgetsPath } from "./utils.ts";
@@ -234,11 +234,11 @@ export async function fandoomUtilsI18nTransformer(this: PluginContext, moduleIds
   
   const boilerplate = await createI18nLoadingLogic(gadget!, loadOptions, i18nOptions);
   if (boilerplate === null) {
-    this.error(`Failed to inject i18n loading logic: 'en' not found`);
+    this.error(`Failed to inject i18n loading logic into gadget ${gadget.name}: 'en' not found`);
     return;
   }
 
-  this.info(`Injected i18n loading logic`);
+  this.info(`Injected i18n loading logic into gadget ${gadget.name}`);
 
   return {
     code: code.replace(

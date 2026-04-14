@@ -71,7 +71,7 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
     build: {
       minify: minify,
       cssMinify: minify,
-      rollupOptions: {
+      rolldownOptions: {
         input: bundleInputs,
         output: {
           // Preserve the directory structure
@@ -85,36 +85,19 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
             }
             return 'assets/[name][extname]';
           },
-          // generatedCode: {
-          //   /**
-          //    * Turn these settings off if you want to enforce ES5 compliance
-          //    */
-          //   arrowFunctions: true,
-          //   constBindings: true,
-          //   objectShorthand: true,
-          // },
           globals: {
             /**
-             * Pass this to ensure that Vite/Rollup does not use $ as a 
+             * Pass this to ensure that Vite/Rolldown does not use $ as a 
              * minification symbol
              */
             'jquery': '$',
             'mediawiki': 'mw',
           },
         },
-        external: [
-          'jquery', 
-          'mediawiki', 
-          /**
-           * Exposed global methods
-           * https://doc.wikimedia.org/mediawiki-core/master/js/window.html
-           */
-          'addOnloadHook',
-          'importScript',
-          'importScriptURI',
-          'importStylesheet',
-          'importStylesheetURI', 
-        ]
+        moduleTypes: {
+          ".yaml": "text",
+          ".yml": "text"
+        },
       },
       outDir: 'dist',
       emptyOutDir: true
@@ -126,52 +109,24 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
         }
       }
     },
-    /**
-     * Additional ESBuild Settings
-     */
-    esbuild: {
-      
-      // format: 'esm',
+    define: {
+      /**
+       * This is passed so we can replace the variable MH_DEVSCRIPTS_CDN_ENTRYPOINT 
+       * used in FandoomUtilsI18nLoader with the actual CDN URL during
+       * compilation
+       */
+      'MH_DEVSCRIPTS_CDN_ENTRYPOINT': `"${cdnEntrypoint}"`,
 
-      // Set this on if you want to preserve comments in /!* */ or //! blocks 
-      // legalComments: 'inline', 
-      
-      // Ignore annotations such as /* @__PURE__ */ when building
-      // ignoreAnnotations: true,
+      'MH_DEVSCRIPTS_GADGET_NAMESPACE': `"${gadgetNamespace}"`,
 
-      // Minification settings
-      // minifyWhitespace: minify && true,
-      // minifyIdentifiers: minify && false,
-      // minifySyntax: minify && true,
-
-      define: {
-        /**
-         * This is passed so we can replace the variable MH_DEVSCRIPTS_CDN_ENTRYPOINT 
-         * used in FandoomUtilsI18nLoader with the actual CDN URL during
-         * compilation
-         */
-        'MH_DEVSCRIPTS_CDN_ENTRYPOINT': `"${cdnEntrypoint}"`,
-
-        'MH_DEVSCRIPTS_GADGET_NAMESPACE': `"${gadgetNamespace}"`,
-
-        /**
-         * Useful for debugging
-         * In your gadget code, use by writing:
-         * `DEBUG && console.log(obj);`
-         * 
-         * On compilation this will become `console.log(obj);` on debug mode, and no output on dist mode.
-         */
-        'DEBUG': isDev || (serverPreviewOrigin || cdnEntrypoint).match(/^https?:\/\/localhost/) !== null ? 'true' : 'false',
-      },
-
-    },
-    optimizeDeps: {
-      esbuildOptions: {
-        loader: {
-          ".yaml": "text",
-          ".yml": "text"
-        }
-      }
+      /**
+       * Useful for debugging
+       * In your gadget code, use by writing:
+       * `DEBUG && console.log(obj);`
+       * 
+       * On compilation this will become `console.log(obj);` on debug mode, and no output on dist mode.
+       */
+      'DEBUG': isDev || (serverPreviewOrigin || cdnEntrypoint).match(/^https?:\/\/localhost/) !== null ? 'true' : 'false',
     },
     preview: {
       open: '/index.html'

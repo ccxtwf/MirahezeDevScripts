@@ -147,7 +147,7 @@ export function resolveDistGadgetsPath(gadgetName?: string, codeRelativePath?: s
  * @returns 
  */
 export function resolveEntrypointFilepath(): string {
-  return normalizePath(resolveDistPath('load.js'));
+  return normalizePath(resolveDistPath('load.js', true));
 }
 
 /**

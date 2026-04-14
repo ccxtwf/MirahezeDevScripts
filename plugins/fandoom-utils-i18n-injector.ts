@@ -1,5 +1,5 @@
 import { PluginOption } from 'vite';
-import { TransformPluginContext } from 'rollup';
+import { TransformPluginContext } from 'rolldown';
 import type { GadgetDefinition } from '../dev-utils/types.js';
 import { 
   fandoomUtilsI18nTransformer, 
