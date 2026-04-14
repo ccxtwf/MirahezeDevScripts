@@ -1,0 +1,246 @@
+import {state} from "../models/state";
+import {newErrorResult, Result} from "./result";
+import {UserGroup} from "../models/user_group";
+
+type UnknownApiParams = Record<
+    string,
+    string | number | boolean | File | string[] | number[] | undefined
+>;
+
+type ThrottleType = 'read' | 'write' | 'download';
+
+class ThrottleControl {
+    lastAction: Record<ThrottleType, number>;
+
+    constructor() {
+        this.lastAction = {download: 0, read: 0, write: 0};
+    }
+
+    async throttle(type: ThrottleType, time: number) {
+        let curTime = Date.now();
+        if (this.lastAction[type]) {
+            const sleepUntil = this.lastAction[type] + time * 1000;
+            if (sleepUntil > curTime) {
+                await new Promise(r => setTimeout(r, sleepUntil - curTime));
+                curTime = Date.now();
+            }
+        }
+        this.lastAction[type] = curTime;
+    }
+}
+
+class Api {
+
+    private token?: string;
+    private defaultParams: UnknownApiParams = {format: 'json'};
+    public throttleControl: ThrottleControl = new ThrottleControl();
+
+    constructor(private readonly api: mw.Api = new mw.Api()) {
+    }
+
+    async getToken(types: string | string[] = 'csrf'): Promise<string> {
+        const type = typeof types === 'string' ? types : types.join('|');
+        const res = await this.post({
+            action: 'query',
+            meta: 'tokens',
+            type,
+        });
+        this.token = res.query.tokens;
+        return this.token!;
+    }
+
+    private processParams(params: UnknownApiParams): void {
+        for (const key in this.defaultParams) {
+            if (key in params) {
+                continue;
+            }
+            params[key] = this.defaultParams[key];
+        }
+    }
+
+    public async throttle(type: ThrottleType, time?: number): Promise<void> {
+        if (!time) {
+            time = type == 'read' ? state.config.readThrottle : state.config.writeThrottle;
+        }
+        await this.throttleControl.throttle(type, time);
+    }
+
+    async get(args: UnknownApiParams) {
+        this.processParams(args);
+        await this.throttle('read');
+        return this.api.get(args);
+    }
+
+    async post(args: UnknownApiParams) {
+        this.processParams(args);
+        await this.throttle('write');
+        return this.api.post(args);
+    }
+
+    async postWithToken(args: UnknownApiParams) {
+        this.processParams(args);
+        await this.throttle('write');
+        return this.api.postWithToken('csrf', args)
+    }
+}
+
+export const API = new Api();
+
+export function formatSummary(summary: string, additionalParameters: Record<string, string> = {}): string {
+    summary = summary.replace("$bot", state.config.summaryBot);
+    for (const key in additionalParameters) {
+        summary = summary.replace(`$${key}`, additionalParameters[key]);
+    }
+    return summary;
+}
+
+export async function purge(titles: string[],
+                            api = API) {
+    if (titles.length === 0) {
+        return false;
+    }
+    if (titles.length > 50) {
+        console.error("Cannot purge more than 50 pages at once");
+        return false;
+    }
+    try {
+        const result = await api.post({
+            action: 'purge',
+            titles: titles.join('|'),
+        });
+        return result.purge.length === titles.length;
+    } catch (error) {
+        console.error(`Failed to purge pages: ${titles} ${error}`);
+        return false;
+    }
+}
+
+export async function savePage(title: string,
+                               text: string,
+                               summary: string = "$bot: automated edit",
+                               minor: boolean = true,
+                               bot: boolean = true,
+                               api: Api = API): Promise<boolean> {
+    try {
+        const result = await api.postWithToken({
+            action: 'edit',
+            title: title,
+            text: text,
+            summary: formatSummary(summary),
+            minor: minor,
+            bot: bot,
+        });
+
+        return result.edit?.result === 'Success';
+    } catch (error) {
+        console.error('Failed to save page:', title, error);
+        return false;
+    }
+}
+
+export async function deletePage(title: string, reason: string, deleteTalk: boolean = false, bot: boolean = true, api = API): Promise<Result<boolean>> {
+    try {
+        await api.postWithToken({
+            action: 'delete',
+            title: title,
+            reason: formatSummary(reason),
+            deletetalk: deleteTalk,
+            bot: bot,
+        });
+
+        return {
+            ok: true,
+            value: true,
+        }
+    } catch (error) {
+        console.error('Failed to delete page:', title, error);
+        return newErrorResult(error.toString());
+    }
+}
+
+export async function undeletePage(title: string, reason: string, undeleteTalk: boolean = false, bot: boolean = true, api = API): Promise<Result<boolean>> {
+    try {
+        await api.postWithToken({
+            action: 'undelete',
+            title: title,
+            reason: formatSummary(reason),
+            undeletetalk: undeleteTalk,
+            bot: bot,
+        });
+
+        return {
+            ok: true,
+            value: true,
+        }
+    } catch (error) {
+        console.error('Failed to undelete page:', title, error);
+        return newErrorResult(error.toString());
+    }
+}
+
+export async function movePage(from: string, to: string, options: {
+    reason: string,
+    moveTalk: boolean,
+    moveSubpages: boolean,
+    noRedirect: boolean,
+    bot: boolean,
+}, api = API): Promise<Result<boolean>> {
+    try {
+        await api.postWithToken({
+            action: 'move',
+            from: from,
+            to: to,
+            reason: formatSummary(options.reason),
+            movetalk: options.moveTalk,
+            movesubpages: options.moveSubpages,
+            noredirect: options.noRedirect,
+            bot: options.bot,
+        });
+
+        return {
+            ok: true,
+            value: true,
+        }
+    } catch (error) {
+        console.error('Failed to move page:', from, 'to:', to, error);
+        return newErrorResult(error.toString());
+    }
+}
+
+export interface SiteInfoResponse {
+    batchcomplete: string;
+    query: {
+        namespaces: Record<string, {
+            id: number;
+            case: string;
+            canonical: string;
+            "*": string;
+            subpages?: string;
+            defaultcontentmodel?: string;
+        }>,
+        usergroups: UserGroup[];
+    }
+}
+
+let cachedSiteInfo: SiteInfoResponse | undefined = undefined;
+let siteInfoPromise: Promise<SiteInfoResponse> | undefined = undefined;
+
+export async function getSiteInfo() {
+
+    if (cachedSiteInfo) {
+        return cachedSiteInfo;
+    }
+
+    if (siteInfoPromise) {
+        return siteInfoPromise;
+    }
+
+    siteInfoPromise = API.get({
+        action: 'query',
+        meta: 'siteinfo',
+        siprop: 'namespaces|usergroups'
+    }) as Promise<SiteInfoResponse>;
+
+    cachedSiteInfo = await siteInfoPromise;
+    return cachedSiteInfo;
+}

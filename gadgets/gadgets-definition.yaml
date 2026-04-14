@@ -18,7 +18,41 @@ gadgets:
     scripts:
       - index.js
 
+  DynamicCategories:
+    description: "Dynamic, gallery, and classic view switcher for category pages"
+    scripts:
+      - index.js
+    styles:
+      - style.less
+    resourceLoader:
+      dependencies:
+        - 'mediawiki.api'
+
+  FilterTable:
+    description: "Add filter buttons to a table"
+    scripts:
+      - index.js
+
   ImportButton:
+    scripts:
+      - index.ts
+
+  jswikibot:
+    scripts:
+      - index.ts
+    styles:
+      - styles.less
+    resourceLoader:
+      dependencies:
+        - 'oojs-ui-core'
+        - 'oojs-ui-windows'
+        - 'mediawiki.util'
+        - 'mediawiki.api'
+        - 'mediawiki.user'
+        - 'mediawiki.widgets'
+        - 'mediawiki.widgets.datetime'
+
+  StatCalc:
     scripts:
       - index.ts
 
