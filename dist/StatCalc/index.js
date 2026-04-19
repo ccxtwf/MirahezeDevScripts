@@ -1,1 +1,293 @@
-const e=e=>Object.is(e,-0)?"-0":e,t={"+":{func:(t,n)=>`${e(Number(t)+Number(n))}`,precedence:1,associativity:"left",arity:2},"-":{func:(t,n)=>`${e(Number(t)-Number(n))}`,precedence:1,associativity:"left",arity:2},"*":{func:(t,n)=>`${e(Number(t)*Number(n))}`,precedence:2,associativity:"left",arity:2},"/":{func:(t,n)=>`${e(Number(t)/Number(n))}`,precedence:2,associativity:"left",arity:2},"%":{func:(t,n)=>`${e(Number(t)%Number(n))}`,precedence:2,associativity:"left",arity:2},"^":{func:(t,n)=>`${e(Math.pow(Number(t),Number(n)))}`,precedence:3,associativity:"right",arity:2}},n=Object.keys(t),r={min:{func:(t,n)=>`${e(Math.min(Number(t),Number(n)))}`,arity:2},max:{func:(t,n)=>`${e(Math.max(Number(t),Number(n)))}`,arity:2},sin:{func:t=>`${e(Math.sin(Number(t)))}`,arity:1},cos:{func:t=>`${e(Math.cos(Number(t)))}`,arity:1},tan:{func:t=>`${e(Math.tan(Number(t)))}`,arity:1},log:{func:e=>`${Math.log(Number(e))}`,arity:1}},o=Object.keys(r),s=e=>e[e.length-1];function i(e){const i=function(e){const t=e.replace(/\s+/g," "),r=[];let i="",c="";for(let a=0;a<t.length;a++){const e=t.charAt(a),u=t.charAt(a-1),l=t.charAt(a+1),f=s(r),p=""!==c;if(/\d/.test(e)||("+"===e||"-"===e)&&!p&&(void 0===f||","===f||"("===f||n.includes(f))&&/\d/.test(l))c+=e;else if("."===e){if(p&&c.includes("."))throw new Error(`Double '.' in number: '${c}${e}'`);c+=e}else if(" "===e){if(/\d/.test(u)&&/\d/.test(l))throw new Error(`Space in number: '${c}${e}${l}'`)}else if(o.includes(i+e))i+=e,o.includes(i+l)||(r.push(i),i="");else if(n.includes(e)||"("===e||")"===e||","===e){if(n.includes(e)&&!p&&n.includes(f))throw new Error(`Consecutive operators: '${f}${e}'`);p&&r.push(c),r.push(e),c=""}else i+=e}if(""!==i)throw new Error(`Invalid characters: '${i}'`);return""!==c&&r.push(c),"+"!==r[0]&&"-"!==r[0]||r.unshift("0"),r}(e),c=function(e){const n=new Array,o=new Array;for(const i of e)if(void 0!==r[i])o.push(i);else if(","===i){for(;o.length>0&&"("!==s(o);)n.push(o.pop());if(0===o.length)throw new Error("Misplaced ','")}else if(void 0!==t[i]){const e=i;for(;o.length>0&&void 0!==s(o)&&"("!==s(o)&&(t[s(o)].precedence>t[e].precedence||t[e].precedence===t[s(o)].precedence&&"left"===t[e].associativity);)n.push(o.pop());o.push(e)}else if("("===i)o.push(i);else if(")"===i){for(;o.length>0&&"("!==s(o);)n.push(o.pop());if(!(o.length>0&&"("===s(o)))throw new Error("Parentheses mismatch");o.pop(),void 0!==r[s(o)]&&n.push(o.pop())}else n.push(i);for(;o.length>0;){if("("===s(o))throw new Error("Parentheses mismatch");n.push(o.pop())}return n}(i);return function(e){const n=new Array,o={...t,...r};for(const t of e){const e=o[t];if(void 0!==e){const t=[];for(let r=0;r<e.arity;r++)t.push(n.pop());n.push(e.func(...t.reverse()))}else n.push(t)}if(n.length>1)throw new Error("Insufficient operators");return Number(n[0])}(c)}!function(){const e=["localhost:","safemode=","action=submit"].some(e=>window.location.href.includes(e));function t(e,t){let n;return function(...r){clearTimeout(n),n=setTimeout(()=>e.apply(this,r),t)}}document.querySelectorAll(".stat-display").forEach(n=>{const r=new Map,o=n.querySelectorAll(".stat-controls");if(0===o.length)return;e&&console.log("Controllers found: ",o);for(const e of o){const n=e.getAttribute("data-levels")?.split(",")?.map(e=>(e||"").trim())?.filter(e=>e&&""!==e);if(!n)return;const o=document.createElement("input");o.type="range",o.classList.add("stat-slider"),o.min="0",o.max=(n.length-1).toString(),o.value="0",e.appendChild(o);const s=document.createElement("input");s.type="text",s.classList.add("stat-input"),e.appendChild(s);const i=e.getAttribute("data-name")||"main",a=e=>{e=Math.max(0,Math.min(e,n.length-1)),r.set(i,e),o&&(o.value=e.toString()),s&&(s.value=n[e].toString())},u=(e,n=!1)=>{a(e),n?t(c,5)():c()};o.addEventListener("input",e=>{const t=e.currentTarget,n=parseInt(t.value);u(n,!1)}),s.addEventListener("change",e=>{const t=e.currentTarget.value.trim(),r=n.indexOf(t);u(-1!==r?r:parseInt(o.value))}),a(0)}const s=n.querySelectorAll(".stat-value");function c(){s.forEach(t=>function(t,n){const r=new Map;if(n.forEach((e,n)=>{for(const o of["","1","2","3","4","5"]){const s=`data-${n}${o}-values`,i=t.getAttribute(s);if(i){const t=i.split(",")[e]||"";r.set(n+o,t)}}}),e&&console.log("Parsed data: ",r),1!=r.size){if(r.size>1){let n=t.getAttribute("data-formula");if(!n)return;const o=Array.from(r.entries()),s=o.slice().sort(([e],[t])=>t.length-e.length);for(const[e,t]of s)n=n?.replaceAll(e,t);e&&(console.log("Entries",o),console.log("New formula",n));const c=parseInt(t.getAttribute("data-precision")||"0")||0,a=i(n).toFixed(c);return t.textContent=a.toString(),void(t.title=o.map(([e,t])=>`${e}: ${t}`).join("\n")+"\n"+n)}for(const[e,r]of n.entries()){const n=`data-${e}-children`,o=t.getAttribute(n);if(!o)continue;const s=o.split(",");let i=parseInt(s[r])||0;return i-=1,void Array.from(t.children).forEach((e,t)=>{e.style.display=t===i?"":"none"})}}else t.textContent=r.values().next().value}(t,r))}c()})}();
+//#region gadgets/utils/math-eval/math-eval.ts
+/**
+* Source: https://stackoverflow.com/a/75355272/8421861
+* License: CC BY-SA 4.0
+*/
+var minus0Hack = (value) => Object.is(value, -0) ? "-0" : value;
+var operators = {
+	"+": {
+		func: (x, y) => `${minus0Hack(Number(x) + Number(y))}`,
+		precedence: 1,
+		associativity: "left",
+		arity: 2
+	},
+	"-": {
+		func: (x, y) => `${minus0Hack(Number(x) - Number(y))}`,
+		precedence: 1,
+		associativity: "left",
+		arity: 2
+	},
+	"*": {
+		func: (x, y) => `${minus0Hack(Number(x) * Number(y))}`,
+		precedence: 2,
+		associativity: "left",
+		arity: 2
+	},
+	"/": {
+		func: (x, y) => `${minus0Hack(Number(x) / Number(y))}`,
+		precedence: 2,
+		associativity: "left",
+		arity: 2
+	},
+	"%": {
+		func: (x, y) => `${minus0Hack(Number(x) % Number(y))}`,
+		precedence: 2,
+		associativity: "left",
+		arity: 2
+	},
+	"^": {
+		func: (x, y) => `${minus0Hack(Math.pow(Number(x), Number(y)))}`,
+		precedence: 3,
+		associativity: "right",
+		arity: 2
+	}
+};
+var operatorsKeys = Object.keys(operators);
+var functions = {
+	min: {
+		func: (x, y) => `${minus0Hack(Math.min(Number(x), Number(y)))}`,
+		arity: 2
+	},
+	max: {
+		func: (x, y) => `${minus0Hack(Math.max(Number(x), Number(y)))}`,
+		arity: 2
+	},
+	sin: {
+		func: (x) => `${minus0Hack(Math.sin(Number(x)))}`,
+		arity: 1
+	},
+	cos: {
+		func: (x) => `${minus0Hack(Math.cos(Number(x)))}`,
+		arity: 1
+	},
+	tan: {
+		func: (x) => `${minus0Hack(Math.tan(Number(x)))}`,
+		arity: 1
+	},
+	log: {
+		func: (x) => `${Math.log(Number(x))}`,
+		arity: 1
+	}
+};
+var functionsKeys = Object.keys(functions);
+var top = (stack) => stack[stack.length - 1];
+/**
+* Shunting yard algorithm: converts infix expression to postfix expression (reverse Polish notation)
+*
+* Example: ['1', '+', '2'] => ['1', '2', '+']
+*
+* https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+* https://github.com/poteat/shunting-yard-typescript
+* https://blog.kallisti.net.nz/2008/02/extension-to-the-shunting-yard-algorithm-to-allow-variable-numbers-of-arguments-to-functions/
+*/
+function shuntingYard(tokens) {
+	const output = new Array();
+	const operatorStack = new Array();
+	for (const token of tokens) if (functions[token] !== void 0) operatorStack.push(token);
+	else if (token === ",") {
+		while (operatorStack.length > 0 && top(operatorStack) !== "(") output.push(operatorStack.pop());
+		if (operatorStack.length === 0) throw new Error("Misplaced ','");
+	} else if (operators[token] !== void 0) {
+		const o1 = token;
+		while (operatorStack.length > 0 && top(operatorStack) !== void 0 && top(operatorStack) !== "(" && (operators[top(operatorStack)].precedence > operators[o1].precedence || operators[o1].precedence === operators[top(operatorStack)].precedence && operators[o1].associativity === "left")) output.push(operatorStack.pop());
+		operatorStack.push(o1);
+	} else if (token === "(") operatorStack.push(token);
+	else if (token === ")") {
+		while (operatorStack.length > 0 && top(operatorStack) !== "(") output.push(operatorStack.pop());
+		if (operatorStack.length > 0 && top(operatorStack) === "(") operatorStack.pop();
+		else throw new Error("Parentheses mismatch");
+		if (functions[top(operatorStack)] !== void 0) output.push(operatorStack.pop());
+	} else output.push(token);
+	while (operatorStack.length > 0) if (top(operatorStack) === "(") throw new Error("Parentheses mismatch");
+	else output.push(operatorStack.pop());
+	return output;
+}
+/**
+* Evaluates reverse Polish notation (RPN) (postfix expression).
+*
+* Example: ['1', '2', '+'] => 3
+*
+* https://en.wikipedia.org/wiki/Reverse_Polish_notation
+* https://github.com/poteat/shunting-yard-typescript
+*/
+function evalReversePolishNotation(tokens) {
+	const stack = new Array();
+	const ops = {
+		...operators,
+		...functions
+	};
+	for (const token of tokens) {
+		const op = ops[token];
+		if (op !== void 0) {
+			const parameters = [];
+			for (let i = 0; i < op.arity; i++) parameters.push(stack.pop());
+			stack.push(op.func(...parameters.reverse()));
+		} else stack.push(token);
+	}
+	if (stack.length > 1) throw new Error("Insufficient operators");
+	return Number(stack[0]);
+}
+/**
+* Breaks a mathematical expression into tokens.
+*
+* Example: "1 + 2" => [1, '+', 2]
+*
+* https://gist.github.com/tchayen/44c28e8d4230b3b05e9f
+*/
+function tokenize(expression) {
+	const expr = expression.replace(/\s+/g, " ");
+	const tokens = [];
+	let acc = "";
+	let currentNumber = "";
+	for (let i = 0; i < expr.length; i++) {
+		const c = expr.charAt(i);
+		const prev_c = expr.charAt(i - 1);
+		const next_c = expr.charAt(i + 1);
+		const lastToken = top(tokens);
+		const numberParsingStarted = currentNumber !== "";
+		if (/\d/.test(c) || (c === "+" || c === "-") && !numberParsingStarted && (lastToken === void 0 || lastToken === "," || lastToken === "(" || operatorsKeys.includes(lastToken)) && /\d/.test(next_c)) currentNumber += c;
+		else if (c === ".") if (numberParsingStarted && currentNumber.includes(".")) throw new Error(`Double '.' in number: '${currentNumber}${c}'`);
+		else currentNumber += c;
+		else if (c === " ") {
+			if (/\d/.test(prev_c) && /\d/.test(next_c)) throw new Error(`Space in number: '${currentNumber}${c}${next_c}'`);
+		} else if (functionsKeys.includes(acc + c)) {
+			acc += c;
+			if (!functionsKeys.includes(acc + next_c)) {
+				tokens.push(acc);
+				acc = "";
+			}
+		} else if (operatorsKeys.includes(c) || c === "(" || c === ")" || c === ",") {
+			if (operatorsKeys.includes(c) && !numberParsingStarted && operatorsKeys.includes(lastToken)) throw new Error(`Consecutive operators: '${lastToken}${c}'`);
+			if (numberParsingStarted) tokens.push(currentNumber);
+			tokens.push(c);
+			currentNumber = "";
+		} else acc += c;
+	}
+	if (acc !== "") throw new Error(`Invalid characters: '${acc}'`);
+	if (currentNumber !== "") tokens.push(currentNumber);
+	if (tokens[0] === "+" || tokens[0] === "-") tokens.unshift("0");
+	return tokens;
+}
+function calculate(expression) {
+	return evalReversePolishNotation(shuntingYard(tokenize(expression)));
+}
+//#endregion
+//#region gadgets/StatCalc/index.ts
+(function() {
+	const DEBUG_MODE = [
+		"localhost:",
+		"safemode=",
+		"action=submit"
+	].some((str) => window.location.href.includes(str));
+	const DEFAULT_CONTROLLER_NAME = "main";
+	function debounce(func, delay) {
+		let timeoutId;
+		return function(...args) {
+			clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => func.apply(this, args), delay);
+		};
+	}
+	function showElementIndex(el, indices) {
+		const data = /* @__PURE__ */ new Map();
+		indices.forEach((index, key) => {
+			for (const i of [
+				"",
+				"1",
+				"2",
+				"3",
+				"4",
+				"5"
+			]) {
+				const attr = `data-${key}${i}-values`;
+				const rawValues = el.getAttribute(attr);
+				if (rawValues) {
+					const val = rawValues.split(",")[index] || "";
+					data.set(key + i, val);
+				}
+			}
+		});
+		if (DEBUG_MODE) console.log("Parsed data: ", data);
+		if (data.size == 1) {
+			el.textContent = data.values().next().value;
+			return;
+		} else if (data.size > 1) {
+			let formula = el.getAttribute("data-formula");
+			if (!formula) return;
+			const entries = Array.from(data.entries());
+			const reversedEntries = entries.slice().sort(([k1], [k2]) => k2.length - k1.length);
+			for (const [k, v] of reversedEntries) formula = formula?.replaceAll(k, v);
+			if (DEBUG_MODE) {
+				console.log("Entries", entries);
+				console.log("New formula", formula);
+			}
+			const precision = parseInt(el.getAttribute("data-precision") || "0") || 0;
+			el.textContent = calculate(formula).toFixed(precision).toString();
+			el.title = entries.map(([k, v]) => `${k}: ${v}`).join("\n") + "\n" + formula;
+			return;
+		}
+		for (const [key, index] of indices.entries()) {
+			const attr = `data-${key}-children`;
+			const childIndices = el.getAttribute(attr);
+			if (!childIndices) continue;
+			const values = childIndices.split(",");
+			let target = parseInt(values[index]) || 0;
+			target -= 1;
+			Array.from(el.children).forEach((child, index) => {
+				if (index === target) child.style.display = "";
+				else child.style.display = "none";
+			});
+			return;
+		}
+	}
+	const initStatDisplay = (container) => {
+		const selectedIndices = /* @__PURE__ */ new Map();
+		const controllers = container.querySelectorAll(".stat-controls");
+		if (controllers.length === 0) return;
+		if (DEBUG_MODE) console.log("Controllers found: ", controllers);
+		for (const controller of controllers) {
+			const levels = controller.getAttribute("data-levels")?.split(",")?.map((val) => (val || "").trim())?.filter((val) => val && val !== "");
+			if (!levels) return;
+			const slider = document.createElement("input");
+			slider.type = "range";
+			slider.classList.add("stat-slider");
+			slider.min = "0";
+			slider.max = (levels.length - 1).toString();
+			slider.value = "0";
+			controller.appendChild(slider);
+			const input = document.createElement("input");
+			input.type = "text";
+			input.classList.add("stat-input");
+			controller.appendChild(input);
+			const key = controller.getAttribute("data-name") || DEFAULT_CONTROLLER_NAME;
+			const updateInputs = (index) => {
+				index = Math.max(0, Math.min(index, levels.length - 1));
+				selectedIndices.set(key, index);
+				if (slider) slider.value = index.toString();
+				if (input) input.value = levels[index].toString();
+			};
+			const indexUpdated = (index, doDebounce = false) => {
+				updateInputs(index);
+				if (doDebounce) debounce(updateUI, 5)();
+				else updateUI();
+			};
+			slider.addEventListener("input", (e) => {
+				const target = e.currentTarget;
+				indexUpdated(parseInt(target.value), false);
+			});
+			input.addEventListener("change", (e) => {
+				const val = e.currentTarget.value.trim();
+				const index = levels.indexOf(val);
+				if (index !== -1) indexUpdated(index);
+				else indexUpdated(parseInt(slider.value));
+			});
+			updateInputs(0);
+		}
+		const updates = container.querySelectorAll(".stat-value");
+		function updateUI() {
+			updates.forEach((el) => showElementIndex(el, selectedIndices));
+		}
+		updateUI();
+	};
+	document.querySelectorAll(".stat-display").forEach(initStatDisplay);
+})();
+//#endregion

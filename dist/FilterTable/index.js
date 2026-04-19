@@ -1,1 +1,173 @@
-mw.hook("wikipage.content").add(function(){const t=["localhost:","safemode=","action=submit"].some(t=>window.location.href.includes(t));if(!$(".filter-wrapper").length)return;const e=Object.freeze({CONTAINS:Symbol("contains"),EXACT:Symbol("exact")});class i{constructor(t){this.table=t,this.columnFilters=new Map}registerRow(t,e,i){this.columnFilters.has(t)||this.columnFilters.set(t,new Map);this.columnFilters.get(t).set(e,{mode:i,filters:new Set})}toggleFilter(t,e,i,n){const o=this.columnFilters.get(t).get(e),{filters:r}=o;n?r.add(i):r.delete(i),this.applyColumnFilter(t)}clearRow(t,e){this.columnFilters.get(t).get(e).filters.clear(),this.applyColumnFilter(t)}rowHasFilters(t,e){return this.columnFilters.get(t).get(e).filters.size>0}applyColumnFilter(t){const i=this.columnFilters.get(t);if(!i)return;const n=Array.from(i.entries()).map(([t,e])=>e).filter(t=>t&&t.filters&&t.filters.size);if(0===n.length)return void this.table.column(t).search("").draw();if(1===n.length){const[{mode:i,filters:o}]=n,r=Array.from(o).join("|"),l=i===e.EXACT?"^("+r+")$":r;return void this.table.column(t).search(l,!0,!1).draw()}const o=n.map(({mode:t,filters:i})=>{t!==e.CONTAINS&&mw.notify("More than one filter row specifies the same column with exact matching mode. This should not happen.",{autoHide:!1,type:"error",title:"FilterTable invalid matching mode."});return`(?=.*(${Array.from(i).join("|")}))`}).join("");this.table.column(t).search(o,!0,!1).draw()}}$.getScript("https://cdn.jsdelivr.net/npm/datatables@1.10.18/media/js/jquery.dataTables.min.js",function(){$(".filter-wrapper").each((n,o)=>{const r=$(o),l=r.data("table-id"),s=$(document.getElementById(l));if(!s.length)return;let a;!function(t){if(0===t.find("thead").length){const e=t.find("tr").first(),i=$("<thead></thead>").append(e);t.prepend(i)}t.find("style").each(function(){$(this).appendTo("head")})}(s);try{a=s.DataTable({paging:!1,info:!1,searching:!0,dom:"t",autoWidth:!1,responsive:!1,order:[]})}catch(f){return void mw.notify(`Error initializing DataTable on table with id ${l}.\nMessage: ${f.message}`,{autoHide:!1,type:"error",title:"FilterTable initialization failed."})}const c=new i(a);"citizen"===mw.config.get("skin")&&s.unwrap(".dataTables_wrapper"),function(e,i){const n=e.find(".filter-counter"),o=e.find(".filter-counter-total");n.length&&i.on("draw",function(){const e=i.page.info();t&&console.log(e),n.text(e.recordsDisplay),o.text(e.recordsTotal)})}(r,a);const d=function(t,e){const i=[];return t.find(".filter-search").each(function(){const t=$(this),n=$('<input type="text" placeholder="Type to search..." />');n.on("keyup input",function(){e.search(this.value).draw()}),t.append(n),i.push(n)}),i}(r,a);r.find(".filter-row").each(function(t){!function(t,i,n,o){const r=parseInt(t.data("col"))-1;if(isNaN(r))return;let l;l="contains"===t.data("mode")?e.CONTAINS:e.EXACT,n.registerRow(r,o,l);const s=t.find(".filter-button.is-all"),a=t.find(".filter-button").not(".is-all");s.on("click",function(){t.find(".filter-button").removeClass("button-selected"),$(this).addClass("button-selected"),n.clearRow(r,o)}),a.on("click",function(){const t=$(this),e=(t.attr("data-query")||t.text().trim()).replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),i=t.hasClass("button-selected");n.toggleFilter(r,o,e,!i),t.toggleClass("button-selected");const l=n.rowHasFilters(r,o);s.toggleClass("button-selected",!l)}),s.trigger("click")}($(this),0,c,t)}),function(t,e){t.find(".filter-reset").on("click",function(){e.forEach(function(t){t.val("").trigger("input")}),t.find(".filter-row").each(function(){const t=$(this).find(".is-all");t.length?t.trigger("click"):$(this).find(".filter-button.button-selected").trigger("click")})})}(r,d)})})});
+//#region gadgets/FilterTable/index.js
+mw.hook("wikipage.content").add(function() {
+	const DEBUG_MODE = [
+		"localhost:",
+		"safemode=",
+		"action=submit"
+	].some((str) => window.location.href.includes(str));
+	const scriptUrl = "https://cdn.jsdelivr.net/npm/datatables@1.10.18/media/js/jquery.dataTables.min.js";
+	if (!$(".filter-wrapper").length) return;
+	const StringMatchingMode = Object.freeze({
+		CONTAINS: Symbol("contains"),
+		EXACT: Symbol("exact")
+	});
+	class ColumnFilterManager {
+		constructor(table) {
+			this.table = table;
+			this.columnFilters = /* @__PURE__ */ new Map();
+		}
+		registerRow(colIndex, rowIndex, mode) {
+			if (!this.columnFilters.has(colIndex)) this.columnFilters.set(colIndex, /* @__PURE__ */ new Map());
+			this.columnFilters.get(colIndex).set(rowIndex, {
+				mode,
+				filters: /* @__PURE__ */ new Set()
+			});
+		}
+		toggleFilter(colIndex, rowIndex, query, isActive) {
+			const { filters } = this.columnFilters.get(colIndex).get(rowIndex);
+			if (isActive) filters.add(query);
+			else filters.delete(query);
+			this.applyColumnFilter(colIndex);
+		}
+		clearRow(colIndex, rowIndex) {
+			this.columnFilters.get(colIndex).get(rowIndex).filters.clear();
+			this.applyColumnFilter(colIndex);
+		}
+		rowHasFilters(colIndex, rowIndex) {
+			return this.columnFilters.get(colIndex).get(rowIndex).filters.size > 0;
+		}
+		applyColumnFilter(colIndex) {
+			const columnMap = this.columnFilters.get(colIndex);
+			if (!columnMap) return;
+			const activeFilters = Array.from(columnMap.entries()).map(([_, rowData]) => rowData).filter((rowData) => rowData && rowData.filters && rowData.filters.size);
+			if (activeFilters.length === 0) {
+				this.table.column(colIndex).search("").draw();
+				return;
+			}
+			if (activeFilters.length === 1) {
+				const [{ mode, filters }] = activeFilters;
+				const regex = Array.from(filters).join("|");
+				const finalRegex = mode === StringMatchingMode.EXACT ? "^(" + regex + ")$" : regex;
+				this.table.column(colIndex).search(finalRegex, true, false).draw();
+				return;
+			}
+			const combinedRegex = activeFilters.map(({ mode, filters }) => {
+				if (mode !== StringMatchingMode.CONTAINS) mw.notify(`More than one filter row specifies the same column with exact matching mode. This should not happen.`, {
+					autoHide: false,
+					type: "error",
+					title: "FilterTable invalid matching mode."
+				});
+				return `(?=.*(${Array.from(filters).join("|")}))`;
+			}).join("");
+			this.table.column(colIndex).search(combinedRegex, true, false).draw();
+		}
+	}
+	function preprocessTable($table) {
+		if ($table.find("thead").length === 0) {
+			const $headerRow = $table.find("tr").first();
+			const $thead = $("<thead></thead>").append($headerRow);
+			$table.prepend($thead);
+		}
+		$table.find("style").each(function() {
+			$(this).appendTo("head");
+		});
+	}
+	function processRowCounter($wrapper, table) {
+		const $counter = $wrapper.find(".filter-counter");
+		const $counterTotal = $wrapper.find(".filter-counter-total");
+		if ($counter.length) table.on("draw", function() {
+			const info = table.page.info();
+			if (DEBUG_MODE) console.log(info);
+			$counter.text(info.recordsDisplay);
+			$counterTotal.text(info.recordsTotal);
+		});
+	}
+	function processRow($row, table, filterManager, rowIndex) {
+		const colIndex = parseInt($row.data("col")) - 1;
+		if (isNaN(colIndex)) return;
+		const modeString = $row.data("mode");
+		let mode;
+		if (modeString === "contains") mode = StringMatchingMode.CONTAINS;
+		else mode = StringMatchingMode.EXACT;
+		filterManager.registerRow(colIndex, rowIndex, mode);
+		const $allBtn = $row.find(".filter-button.is-all");
+		const $optionButtons = $row.find(".filter-button").not(".is-all");
+		$allBtn.on("click", function() {
+			$row.find(".filter-button").removeClass("button-selected");
+			$(this).addClass("button-selected");
+			filterManager.clearRow(colIndex, rowIndex);
+		});
+		$optionButtons.on("click", function() {
+			const $this = $(this);
+			const query = ($this.attr("data-query") || $this.text().trim()).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+			const isActive = $this.hasClass("button-selected");
+			filterManager.toggleFilter(colIndex, rowIndex, query, !isActive);
+			$this.toggleClass("button-selected");
+			const hasActiveFilters = filterManager.rowHasFilters(colIndex, rowIndex);
+			$allBtn.toggleClass("button-selected", !hasActiveFilters);
+		});
+		$allBtn.trigger("click");
+	}
+	function processSearchFields($wrapper, table) {
+		const searchFields = [];
+		$wrapper.find(".filter-search").each(function() {
+			const $container = $(this);
+			const $searchField = $("<input type=\"text\" placeholder=\"Type to search...\" />");
+			$searchField.on("keyup input", function() {
+				table.search(this.value).draw();
+			});
+			$container.append($searchField);
+			searchFields.push($searchField);
+		});
+		return searchFields;
+	}
+	function processResetAllButton($wrapper, searchFields) {
+		$wrapper.find(".filter-reset").on("click", function() {
+			searchFields.forEach(function($searchField) {
+				$searchField.val("").trigger("input");
+			});
+			$wrapper.find(".filter-row").each(function() {
+				const $selectAllButton = $(this).find(".is-all");
+				if ($selectAllButton.length) $selectAllButton.trigger("click");
+				else $(this).find(".filter-button.button-selected").trigger("click");
+			});
+		});
+	}
+	$.getScript(scriptUrl, function() {
+		$(".filter-wrapper").each((_, element) => {
+			const $wrapper = $(element);
+			const tableId = $wrapper.data("table-id");
+			const $table = $(document.getElementById(tableId));
+			if (!$table.length) return;
+			preprocessTable($table);
+			let table;
+			try {
+				table = $table.DataTable({
+					paging: false,
+					info: false,
+					searching: true,
+					dom: "t",
+					autoWidth: false,
+					responsive: false,
+					order: []
+				});
+			} catch (e) {
+				mw.notify(`Error initializing DataTable on table with id ${tableId}.\nMessage: ${e.message}`, {
+					autoHide: false,
+					type: "error",
+					title: "FilterTable initialization failed."
+				});
+				return;
+			}
+			const filterManager = new ColumnFilterManager(table);
+			if (mw.config.get("skin") === "citizen") $table.unwrap(".dataTables_wrapper");
+			processRowCounter($wrapper, table);
+			const searchFields = processSearchFields($wrapper, table);
+			$wrapper.find(".filter-row").each(function(index) {
+				processRow($(this), table, filterManager, index);
+			});
+			processResetAllButton($wrapper, searchFields);
+		});
+	});
+});
+//#endregion
