@@ -158,6 +158,15 @@
 	var lang = mw.config.get("wgUserLanguage");
 	POWER_EDITOR_TOOLBOX_PORTLET_HEADING_TEXT = i18n[lang] || i18n[lang.split("-")[0]] || i18n.en;
 	/**
+	* Font Awesome Icon
+	* Font Awesome Free v7.2.0 by @fontawesome 
+	* https://fontawesome.com 
+	* License - https://fontawesome.com/license/free (attribution required)
+	* Copyright 2026 Fonticons, Inc.
+	* https://fontawesome.com/icons/toolbox?s=solid
+	*/
+	const TOOLBOX_ICON = $("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\" fill=\"currentColor\"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d=\"M176 56l0 40 160 0 0-40c0-4.4-3.6-8-8-8L184 48c-4.4 0-8 3.6-8 8zM128 96l0-40c0-30.9 25.1-56 56-56L328 0c30.9 0 56 25.1 56 56l0 40 28.1 0c12.7 0 24.9 5.1 33.9 14.1l51.9 51.9c9 9 14.1 21.2 14.1 33.9l0 76.1-136 0 0-16c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 16-144 0 0-16c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 16-136 0 0-76.1c0-12.7 5.1-24.9 14.1-33.9l51.9-51.9c9-9 21.2-14.1 33.9-14.1L128 96zM0 416l0-96 136 0 0 16c0 13.3 10.7 24 24 24s24-10.7 24-24l0-16 144 0 0 16c0 13.3 10.7 24 24 24s24-10.7 24-24l0-16 136 0 0 96c0 35.3-28.7 64-64 64L64 480c-35.3 0-64-28.7-64-64z\"/></svg>");
+	/**
 	* Utility function.
 	* 
 	* @param {jQuery.Element} insert
@@ -290,7 +299,7 @@
 			"class": "citizen-dropdown-summary",
 			title: POWER_EDITOR_TOOLBOX_PORTLET_HEADING_TEXT,
 			"aria-details": "citizen-powertools-portlet-container__card"
-		}).append($("<span>", { "class": "citizen-ui-icon mw-ui-icon-edit mw-ui-icon-wikimedia-edit" }), $("<span>").text(POWER_EDITOR_TOOLBOX_PORTLET_HEADING_TEXT))), $("<div>", {
+		}).append($("<span>", { "class": "powertools-icon" }).append(TOOLBOX_ICON), $("<span>").text(POWER_EDITOR_TOOLBOX_PORTLET_HEADING_TEXT))), $("<div>", {
 			id: "citizen-powertools-portlet-container__card",
 			"class": "citizen-menu__card"
 		}).append($("<div>", { "class": "citizen-menu__card-content" }).append($("<div>", {
@@ -301,9 +310,14 @@
 			id: "p-power-editor-tools"
 		}).append($("<div>", { "class": "citizen-menu__heading" }).text(POWER_EDITOR_TOOLBOX_PORTLET_HEADING_TEXT), $("<div>", { "class": "citizen-menu__content" }).append($("<ul>", { "class": "citizen-menu__content-list" })))))));
 		$(".citizen-header__start").append(newMenu);
-		$("body").on("click", function() {
-			if ($("#citizen-powertools-portlet-container-details").attr("open")) $("#citizen-powertools-portlet-container-details").attr("open", null);
-		});
+		var closeMenu = function(event) {
+			if ($("#citizen-powertools-portlet-container-details").attr("open")) {
+				$("#citizen-powertools-portlet-container-details").attr("open", null);
+				event.preventDefault();
+			}
+		};
+		$("body").on("click", closeMenu);
+		$("#citizen-powertools-portlet-container-details").on("click", closeMenu);
 		return newMenu.find("#" + POWER_EDITOR_TOOLBOX_PORTLET_ID);
 	}
 	/**
@@ -316,12 +330,12 @@
 		var portlet = $("<div>", {
 			id: POWER_EDITOR_TOOLBOX_PORTLET_ID,
 			"class": "floating"
-		}).append($("<div>").append($("<div>", { "class": "powertools-portlet-menu-label" }).append($("<img>", { src: "https://upload.wikimedia.org/wikipedia/commons/1/14/Codex_icon_edit_color-placeholder.svg" }), $("<span>").text(POWER_EDITOR_TOOLBOX_PORTLET_HEADING_TEXT).append($("<span>", { "class": "powertools-portlet-arrow-icon" }).append($("<svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\"><path d=\"M 2 5 L 12 5 L 7 10 Z\"></path></svg>"))), $("<div>", { "class": "crosshair" }).append($("<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <path d=\"M12 5L12 19\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M9 17L12 20L15 17\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M15 7L12 4L9 7\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M5 12L19 12\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M17 15L20 12L17 9\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M7 9L4 12L7 15\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> </g></svg>"))), $("<div>", { "class": "powertools-portlet-body" }).append($("<ul>"))));
+		}).append($("<div>").append($("<div>", { "class": "powertools-portlet-menu-label" }).append($("<span>", { "class": "powertools-icon" }).append(TOOLBOX_ICON), $("<span>", { "class": "powertools-label-text" }).text(POWER_EDITOR_TOOLBOX_PORTLET_HEADING_TEXT).append($("<span>", { "class": "powertools-portlet-arrow-icon" }).append($("<svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\"><path d=\"M 2 5 L 12 5 L 7 10 Z\"></path></svg>"))), $("<div>", { "class": "crosshair" }).append($("<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <path d=\"M12 5L12 19\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M9 17L12 20L15 17\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M15 7L12 4L9 7\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M5 12L19 12\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M17 15L20 12L17 9\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M7 9L4 12L7 15\" stroke=\"#200E32\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> </g></svg>"))), $("<div>", { "class": "powertools-portlet-body" }).append($("<ul>"))));
 		portlet.on("pointerup", function() {
 			if ($(this).hasClass("dragging")) return;
 			$(this).toggleClass("show");
 		});
-		portlet.on("mousedown mousemove", function(e) {
+		portlet.on("pointerdown pointermove", function(e) {
 			e.preventDefault();
 		});
 		$("body").append(portlet);

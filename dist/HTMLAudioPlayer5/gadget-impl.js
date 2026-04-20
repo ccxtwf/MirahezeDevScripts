@@ -1,4 +1,4 @@
-!function(mw){mw.loader.getState("ext.gadget.store.FandoomUtilsI18nLoader")||importScriptURI("https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@1776669844/dist/FandoomUtilsI18nLoader/gadget-impl.js"),mw.loader.impl(function(){return["ext.gadget.store.HTMLAudioPlayer5@a5db8c7e",function($,e,t,n){
+!function(mw){mw.loader.getState("ext.gadget.store.FandoomUtilsI18nLoader")||importScriptURI("https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@1776669941/dist/FandoomUtilsI18nLoader/gadget-impl.js"),mw.loader.impl(function(){return["ext.gadget.store.HTMLAudioPlayer5@db16f981",function($,e,t,n){
 /**
 * @name HTML5AudioPlayer
 * @author Manuel de la Fuente (https://manuelfte.com)
