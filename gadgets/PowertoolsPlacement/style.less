@@ -1,3 +1,12 @@
+.powertools-icon {
+	content: '';
+
+	&.powertools-icon.powertools-icon {
+		width: 20px;
+		height: 20px;
+	}
+}
+
 #p-power-editor-tools.floating {
 	--powertools-portlet-background-color: #fff;
 	--powertools-portlet-background-hover-color: #f0f0f0;
@@ -19,6 +28,9 @@
 		direction: ltr;
 	}
 
+	// Prevents portlet from breaking on mobile
+	touch-action: none;
+
 	> div {
 		width: var( --powertools-portlet-width );
 		transition: width 300ms;
@@ -27,7 +39,7 @@
 
 	.powertools-portlet-menu-label {
 		border-radius: var( --powertools-portlet-border-radius );
-		padding: 8px 15px;
+		padding: 8px 14px;
 		box-sizing: border-box;
 		width: 100%;
 		height: 50px;
@@ -42,16 +54,27 @@
 		align-items: center;
 		position: relative;
 
-		img {
-			margin-right: 5px;
+		.powertools-icon {
+			position: absolute;
 		}
 
-		span,
-		div.crosshair {
+		.powertools-label-text {
+			margin-left: 25px;
+		}
+
+		.powertools-label-text,
+		.crosshair {
 			visibility: hidden;
 			opacity: 0;
-			transition: visibility 500ms, opacity 500ms ease-out;
+			transition: width 200ms, visibility 300ms, opacity 300ms ease-out;
 			transition-delay: 100ms;
+		}
+
+		.crosshair {
+			position: absolute;
+			right: 15px;
+			width: 20px;
+			height: 20px;
 		}
 	}
 
@@ -101,7 +124,7 @@
 			border-bottom-left-radius: var( --powertools-portlet-border-radius );
 			border-bottom-right-radius: var( --powertools-portlet-border-radius );
 
-			svg {
+			.powertools-portlet-arrow-icon svg {
 				transform: rotate( 180deg );
 			}
 		}
@@ -126,12 +149,12 @@
 			}
 		}
 	}
+}
 
-	.crosshair {
-		position: absolute;
-		right: 15px;
-		width: 20px;
-		height: 20px;
+body.skin-citizen .powertools-icon {
+	// yes
+	&.powertools-icon.powertools-icon {
+		clip-path: none;
 	}
 }
 
