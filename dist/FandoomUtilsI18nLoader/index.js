@@ -991,7 +991,7 @@
 		* @var {object} params
 		* @var {object} api
 		*/
-		var deferred = $.Deferred(), entrypoint = "https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@1776596079/dist";
+		var deferred = $.Deferred(), entrypoint = "https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@1776669844/dist";
 		options = options || {};
 		options.entrypoint = options.entrypoint || entrypoint;
 		options.cacheVersion = Number(options.cacheVersion) || 0;
