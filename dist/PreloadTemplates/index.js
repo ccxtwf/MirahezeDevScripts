@@ -162,7 +162,6 @@
 		$main.append(i18n.msg("error", mw.html.element("a", { href: mw.util.getUrl(primaryPlPagename) }, primaryPlPagename)).plain(), $help);
 	}
 	function init() {
-		if ($main.find("#pt-list").length > 0) return;
 		var primaryPlPagename = config.primary;
 		var secondaryPlPagename = config.secondary;
 		var fetchedFromCache = getListOfTemplatesFromCache(primaryPlPagename, secondaryPlPagename);
@@ -204,6 +203,7 @@
 				});
 			}
 		}).fail(initFail);
+		mw.hook("wikipage.content").remove(init);
 	}
 	function populateDropdowns(listPrimary, listSecondary) {
 		var parsedPrimary = parseMW(listPrimary);
