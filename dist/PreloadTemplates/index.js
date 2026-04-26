@@ -308,7 +308,11 @@
 	}
 	$.when(getI18nLoader(), mw.loader.using("mediawiki.util")).done(function(i18nLoader) {
 		preInit(i18nLoader);
-		mw.hook("wikipage.content").add(init);
+		var _hookHandler = function() {
+			init();
+			mw.hook("wikipage.content").remove(_hookHandler);
+		};
+		mw.hook("wikipage.content").add(_hookHandler);
 	});
 })();
 //#endregion
