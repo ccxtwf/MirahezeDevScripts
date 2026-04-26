@@ -396,6 +396,9 @@
 				});
 			}
 		}).fail(initFail);
+		
+		// Initialize only once
+		mw.hook( 'wikipage.content' ).remove(init);
 	}
 	
 	function populateDropdowns(listPrimary, listSecondary) {
