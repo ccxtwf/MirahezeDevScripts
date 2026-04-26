@@ -464,6 +464,11 @@
 		//mw.hook('ve.activationComplete').add(function () { // Visual Editor
 		//appendModule(true);
 		//});
-		mw.hook( 'wikipage.content' ).add(init);
+		var _hookHandler = function () {
+      init();
+      // Initialize once only
+      mw.hook( 'wikipage.content' ).remove(_hookHandler);
+    };
+		mw.hook( 'wikipage.content' ).add(_hookHandler);
 	});
 })();
