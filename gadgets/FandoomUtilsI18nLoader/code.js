@@ -1137,9 +1137,9 @@
     _cache: cache
   };
 
-  // module is passed from the mw.loader.impl invocation that the contents of this 
+  // mwModule is passed from the mw.loader.impl invocation that the contents of this 
   // code is injected into
-  if (typeof mwModule !== "undefined" && mwModule.exports) { // eslint-disable-line no-undef
+  if (typeof mwModule !== "undefined") { // eslint-disable-line no-undef
     mwModule.exports = loader; // eslint-disable-line no-undef
   }
   window.dev.i18nLoader = $.extend(window.dev.i18nLoader, loader);
