@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import type { PluginContext, TransformResult } from "rollup";
+import type { PluginContext, TransformResult } from "rolldown";
 import type { GadgetDefinition } from "./types.ts";
 //@ts-ignore
 import { resolveSrcGadgetsPath } from "./utils.ts";
