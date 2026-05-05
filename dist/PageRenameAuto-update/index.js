@@ -386,7 +386,7 @@
 		initialize: function(i18nLoader) {
 			PRA.i18n = prepareI18n(i18nLoader);
 			if (PRA.wg.wgCanonicalSpecialPageName === "Blankpage" && mw.util.getParamValue("blankspecial") === "pageusageupdate") {
-				if (mw.loader.getState(".FandoomUiUtilsDorui") === null) importScriptURI("https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@1777196789/dist/FandoomUiUtilsDorui/gadget-impl.js");
+				if (mw.loader.getState(".FandoomUiUtilsDorui") === null) importScriptURI("https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@1778000522/dist/FandoomUiUtilsDorui/gadget-impl.js");
 				mw.hook("dev.doru.ui").add(this.setupForm.bind(this));
 				return;
 			}

@@ -43,7 +43,6 @@ mw.loader.using("mediawiki.api", function() {
 	function init() {
 		mw.libs.PowertoolsPlacement.addPortletLink(mw.config.values.skin, {
 			id: "t-mr",
-			href: "#",
 			label: i18n.msg("title").plain(),
 			tooltip: "MassRename",
 			onClick: click

@@ -991,7 +991,7 @@
 		* @var {object} params
 		* @var {object} api
 		*/
-		var deferred = $.Deferred(), entrypoint = "https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@1777196789/dist";
+		var deferred = $.Deferred(), entrypoint = "https://cdn.jsdelivr.net/gh/ccxtwf/MirahezeDevScripts@1778000522/dist";
 		options = options || {};
 		options.entrypoint = options.entrypoint || entrypoint;
 		options.cacheVersion = Number(options.cacheVersion) || 0;
@@ -1023,7 +1023,7 @@
 		_fallbacks: fallbacks,
 		_cache: cache
 	};
-	if (typeof mwModule !== "undefined" && mwModule.exports) mwModule.exports = loader;
+	if (typeof mwModule !== "undefined") mwModule.exports = loader;
 	window.dev.i18nLoader = $.extend(window.dev.i18nLoader, loader);
 	mw.hook("dev.fandoom.i18n").fire(window.dev.i18nLoader);
 	removeOldCacheEntries();

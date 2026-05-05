@@ -643,7 +643,6 @@
 		addToolbarButton: function() {
 			mw.libs.PowertoolsPlacement.addPortletLink(mw.config.values.skin, {
 				id: "MassCat-tools-button",
-				href: "#",
 				cssClasses: "custom",
 				label: this.i18n.msg("my-tools-button").plain(),
 				tooltip: "MassCategorization",
